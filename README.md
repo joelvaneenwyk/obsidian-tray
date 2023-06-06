@@ -1,10 +1,14 @@
-<img alt="" src="tray.png" align="right"  height="128px">
+# Obsidian Tray Plugin
 
 **Tray** is an [Obsidian](https://obsidian.md/) plugin that can be used to launch the app
 on system startup and run it in the background, adding global hotkeys and a tray menu to
 toggle window visibility and create quick notes from anywhere in your operating system.
 
+![Screenshot of Obsidian Tray menu](tray.png)
+
 ## Configuration
+
+<!-- markdownlint-disable MD033 -->
 
 ### Window management
 
@@ -15,7 +19,7 @@ toggle window visibility and create quick notes from anywhere in your operating 
 | Run in background          | Hide the app and continue to run it in the background instead of quitting it when pressing the window close button or toggle focus hotkey.                                                               | Disabled                       |
 | Hide taskbar icon          | Hides the window's icon from from the dock/taskbar. This may not work on Linux-based OSes.                                                                                                               | Disabled                       |
 | Create tray icon           | Add an icon to your system tray/menubar to bring hidden Obsidian windows back into focus on click or force a full quit/relaunch of the app through the right-click menu.                                 | Enabled                        |
-| Tray icon image            | Set the image used by the tray/menubar icon. Recommended size: 16x16                                                                                                                                     | ![](obsidian.png)              |
+| Tray icon image            | Set the image used by the tray/menubar icon. Recommended size: 16x16                                                                                                                                     | ![Obsidian Icon](obsidian.png)              |
 | Tray icon tooltip          | Set a title to identify the tray/menubar icon by. The `{{vault}}` placeholder will be replaced by the vault name.                                                                                        | `{{vault}} \| Obsidian`        |
 | Toggle window focus hotkey | This hotkey is registered globally and will be detected even if Obsidian does not have keyboard focus. Format: [Electron accelerator](https://www.electronjs.org/docs/latest/api/accelerator)            | <kbd>CmdOrCtrl+Shift+Tab</kbd> |
 
