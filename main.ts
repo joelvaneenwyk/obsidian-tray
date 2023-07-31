@@ -34,20 +34,27 @@ const LOG_PREFIX = "obsidian-tray",
   `,
   // 16x16 base64 obsidian icon: generated from obsidian.asar/icon.png
   OBSIDIAN_BASE64_ICON = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHZSURBVDhPlZKxTxRBFMa/XZcF7nIG7mjxjoRCwomJxgsFdhaASqzQxFDzB1AQKgstLGxIiBQGJBpiCCGx8h+wgYaGgAWNd0dyHofeEYVwt/PmOTMZV9aDIL/s5pvZvPfN9yaL/+HR3eXcypta0m4juFbP5GHuXc9IbunDFc9db/G81/ZzhDMN7g8td47mll4R5BfHwZN4LOaA+fHa259PbUmIYzWkt3e2NZNo3/V9v1vvU6kkstk+tLW3ItUVr/m+c3N8MlkwxYqmBFcbwUQQCNOcyVzDwEAWjuPi5DhAMV/tKOYPX5hCyz8Gz1zX5SmWjBvZfmTSaRBJkGAIoxJHv+pVW2yIGNxOJ8bUVNcFEWLxuG1ia6JercTbttwQTeDwPS0kCMXiXtgk/jQrFUw7ptYSMWApF40yo/ytjHq98fdk3ayVE+cn2CxMb6ruz9qAJKFUKoWza1VJSi/n0+ffgYHdWW2gHuxXymg0gjCB0sjpmiaDnkL3RzDyzLqBUKns2ztQqUR0fk2TwSrGSf1eczqF5vsPZRCQSSAFLk6gqctgQRkc6TWRQLV2YMYQki9OoNkqzFQ9r+WOGuW5CrJbOzyAlPKr6MSGLbkcDwbf35oY/jRkt6cAfgNwowruAMz9AgAAAABJRU5ErkJggg==`,
-  log = (message) => console.log(`${LOG_PREFIX}: ${message}`);
+  log = (message: string) => console.log(`${LOG_PREFIX}: ${message}`);
 
-let tray, plugin;
-const obsidian = require("obsidian"),
-  { app, Tray, Menu, nativeImage } = require("electron").remote,
-  { getCurrentWindow, globalShortcut } = require("electron").remote;
+let tray: any;
+let plugin: any;
+
+import * as obsidian from "obsidian";
+import * as electron from "electron";
+
+import { Menu, Tray } from "electron/main";
+import { nativeImage } from "electron/common";
+import { globalShortcut, app } from "electron";
 
 const childWindows = new Set(),
   observeChildWindows = () => {
-    getCurrentWindow().webContents.on("did-create-window", (win) => {
-      childWindows.add(win);
-      win.on("close", () => childWindows.delete(win));
-      win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
-    });
+    electron.remote
+      .getCurrentWindow()
+      .webContents.on("did-create-window", (win: any) => {
+        childWindows.add(win);
+        win.on("close", () => childWindows.delete(win));
+        win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
+      });
   },
   getAllWindows = () => [...childWindows, getCurrentWindow()],
   showWindows = () => {
@@ -69,8 +76,8 @@ const childWindows = new Set(),
     else showWindows();
   };
 
-const onWindowClose = (event) => event.preventDefault(),
-  onWindowUnload = (event) => {
+const onWindowClose = (event: any) => event.preventDefault(),
+  onWindowUnload = (event: any) => {
     log(LOG_WINDOW_CLOSE);
     getCurrentWindow().hide();
     event.stopImmediatePropagation();
@@ -125,7 +132,7 @@ const addQuickNote = () => {
     plugin.app.fileManager.createAndOpenMarkdownFile(name);
     showWindows();
   },
-  replaceVaultName = (str) => {
+  replaceVaultName = (str: any) => {
     return str.replace(/{{vault}}/g, plugin.app.vault.getName());
   },
   destroyTray = () => {
@@ -420,7 +427,9 @@ class TrayPlugin extends obsidian.Plugin {
   }
 
   async loadSettings() {
-    const DEFAULT_SETTINGS = OPTIONS.map((opt) => ({ [opt.key]: opt.default }));
+    const DEFAULT_SETTINGS = OPTIONS.map((opt) => ({
+      [opt.key]: opt.default,
+    }));
     this.settings = Object.assign(...DEFAULT_SETTINGS, await this.loadData());
   }
   async saveSettings() {
