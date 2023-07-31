@@ -6,28 +6,28 @@
 
 "use strict";
 
-const LOG_PREFIX = "obsidian-tray",
-  LOG_LOADING = "loading",
-  LOG_CLEANUP = "cleaning up",
-  LOG_SHOWING_WINDOWS = "showing windows",
-  LOG_HIDING_WINDOWS = "hiding windows",
-  LOG_WINDOW_CLOSE = "intercepting window close",
-  LOG_TRAY_ICON = "creating tray icon",
-  LOG_REGISTER_HOTKEY = "registering hotkey",
-  LOG_UNREGISTER_HOTKEY = "unregistering hotkey",
-  ACTION_QUICK_NOTE = "Quick Note",
-  ACTION_SHOW = "Show Vault",
-  ACTION_HIDE = "Hide Vault",
-  ACTION_RELAUNCH = "Relaunch Obsidian",
-  ACTION_CLOSE = "Close Vault",
-  DEFAULT_DATE_FORMAT = "YYYY-MM-DD",
-  ACCELERATOR_FORMAT = `
+const LOG_PREFIX = "obsidian-tray";
+const LOG_LOADING: string = "loading";
+const LOG_CLEANUP: string = "cleaning up";
+const LOG_SHOWING_WINDOWS: string = "showing windows";
+const LOG_HIDING_WINDOWS: string = "hiding windows";
+const LOG_WINDOW_CLOSE: string = "intercepting window close";
+const LOG_TRAY_ICON: string = "creating tray icon";
+const LOG_REGISTER_HOTKEY: string = "registering hotkey";
+const LOG_UNREGISTER_HOTKEY: string = "unregistering hotkey";
+const ACTION_QUICK_NOTE: string = "Quick Note";
+const ACTION_SHOW: string = "Show Vault";
+const ACTION_HIDE: string = "Hide Vault";
+const ACTION_RELAUNCH: string = "Relaunch Obsidian";
+const ACTION_CLOSE: string = "Close Vault";
+const DEFAULT_DATE_FORMAT: string = "YYYY-MM-DD";
+const ACCELERATOR_FORMAT: string = `
     This hotkey is registered globally and will be detected even if Obsidian does
     not have keyboard focus. Format:
     <a href="https://www.electronjs.org/docs/latest/api/accelerator" target="_blank" rel="noopener">
     Electron accelerator</a>
-  `,
-  MOMENT_FORMAT = `
+  `;
+const MOMENT_FORMAT: string = `
     Format:
     <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noopener">
     Moment.js format string</a>
@@ -36,8 +36,8 @@ const LOG_PREFIX = "obsidian-tray",
   OBSIDIAN_BASE64_ICON = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHZSURBVDhPlZKxTxRBFMa/XZcF7nIG7mjxjoRCwomJxgsFdhaASqzQxFDzB1AQKgstLGxIiBQGJBpiCCGx8h+wgYaGgAWNd0dyHofeEYVwt/PmOTMZV9aDIL/s5pvZvPfN9yaL/+HR3eXcypta0m4juFbP5GHuXc9IbunDFc9db/G81/ZzhDMN7g8td47mll4R5BfHwZN4LOaA+fHa259PbUmIYzWkt3e2NZNo3/V9v1vvU6kkstk+tLW3ItUVr/m+c3N8MlkwxYqmBFcbwUQQCNOcyVzDwEAWjuPi5DhAMV/tKOYPX5hCyz8Gz1zX5SmWjBvZfmTSaRBJkGAIoxJHv+pVW2yIGNxOJ8bUVNcFEWLxuG1ia6JercTbttwQTeDwPS0kCMXiXtgk/jQrFUw7ptYSMWApF40yo/ytjHq98fdk3ayVE+cn2CxMb6ruz9qAJKFUKoWza1VJSi/n0+ffgYHdWW2gHuxXymg0gjCB0sjpmiaDnkL3RzDyzLqBUKns2ztQqUR0fk2TwSrGSf1eczqF5vsPZRCQSSAFLk6gqctgQRkc6TWRQLV2YMYQki9OoNkqzFQ9r+WOGuW5CrJbOzyAlPKr6MSGLbkcDwbf35oY/jRkt6cAfgNwowruAMz9AgAAAABJRU5ErkJggg==`,
   log = (message: string) => console.log(`${LOG_PREFIX}: ${message}`);
 
-let tray: any;
-let plugin: any;
+let tray: Tray;
+let plugin: TrayPlugin;
 
 import * as obsidian from "obsidian";
 import * as electron from "electron";
@@ -48,6 +48,7 @@ import { globalShortcut, app } from "electron";
 
 const childWindows = new Set(),
   observeChildWindows = () => {
+    // @ts-ignore
     electron.remote
       .getCurrentWindow()
       .webContents.on("did-create-window", (win: any) => {
@@ -56,6 +57,7 @@ const childWindows = new Set(),
         win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
       });
   },
+  // @ts-ignore
   getAllWindows = () => [...childWindows, getCurrentWindow()],
   showWindows = () => {
     log(LOG_SHOWING_WINDOWS);
@@ -79,6 +81,7 @@ const childWindows = new Set(),
 const onWindowClose = (event: any) => event.preventDefault(),
   onWindowUnload = (event: any) => {
     log(LOG_WINDOW_CLOSE);
+    // @ts-ignore
     getCurrentWindow().hide();
     event.stopImmediatePropagation();
     // setting return value manually is more reliable than
@@ -91,19 +94,23 @@ const onWindowClose = (event: any) => event.preventDefault(),
     // intercept in main: is asynchronously executed when registered
     // from renderer, so won't prevent close by itself, but counteracts
     // the 3-second delayed window force close in obsidian.asar/main.js
+    // @ts-ignore
     getCurrentWindow().on("close", onWindowClose);
   },
   allowWindowClose = () => {
+    // @ts-ignore
     getCurrentWindow().removeListener("close", onWindowClose);
     window.removeEventListener("beforeunload", onWindowUnload, true);
   };
 
 const setHideTaskbarIcon = () => {
     getAllWindows().forEach((win) => {
+      // @ts-ignore
       win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
     });
   },
   setLaunchOnStartup = () => {
+    // @ts-ignore
     const { launchOnStartup, runInBackground, hideOnLaunch } = plugin.settings;
     app.setLoginItemSettings({
       openAtLogin: launchOnStartup,
@@ -129,6 +136,7 @@ const addQuickNote = () => {
       name = obsidian
         .normalizePath(`${quickNoteLocation ?? ""}/${date}`)
         .replace(/\*|"|\\|<|>|:|\||\?/g, "-");
+    // @ts-ignore
     plugin.app.fileManager.createAndOpenMarkdownFile(name);
     showWindows();
   },
@@ -137,7 +145,7 @@ const addQuickNote = () => {
   },
   destroyTray = () => {
     tray?.destroy();
-    tray = undefined;
+    // tray = undefined;
   },
   createTrayIcon = () => {
     destroyTray();
@@ -185,14 +193,19 @@ const registerHotkeys = () => {
       if (quickNoteHotkey) {
         globalShortcut.register(quickNoteHotkey, addQuickNote);
       }
-    } catch {}
+    } catch {
+      // @ts-ignore
+      console.warn("Failed to register hotkeys");
+    }
   },
   unregisterHotkeys = () => {
     log(LOG_UNREGISTER_HOTKEY);
     try {
       globalShortcut.unregister(plugin.settings.toggleWindowFocusHotkey);
       globalShortcut.unregister(plugin.settings.quickNoteHotkey);
-    } catch {}
+    } catch {
+      console.warn("Failed to register hotkeys");
+    }
   };
 
 const OPTIONS = [
@@ -305,14 +318,14 @@ const OPTIONS = [
   },
 ];
 
-const keyToLabel = (key) =>
+const keyToLabel = (key: string) =>
     key[0].toUpperCase() +
     key
       .slice(1)
       .split(/(?=[A-Z])/)
       .map((word) => word.toLowerCase())
       .join(" "),
-  htmlToFragment = (html) =>
+  htmlToFragment = (html: string) =>
     document
       .createRange()
       .createContextualFragment((html ?? "").replace(/\s+/g, " "));
@@ -326,9 +339,11 @@ class SettingsTab extends obsidian.PluginSettingTab {
         setting.setName(opt);
         setting.setHeading();
       } else {
+        // @ts-ignore
         if (opt.default) opt.placeholder ??= `Example: ${opt.default}`;
         setting.setName(keyToLabel(opt.key));
         setting.setDesc(htmlToFragment(opt.desc));
+        // @ts-ignore
         const onChange = async (value) => {
           await opt.onBeforeChange?.();
           plugin.settings[opt.key] = value;
@@ -343,18 +358,23 @@ class SettingsTab extends obsidian.PluginSettingTab {
           });
         } else if (opt.type === "image") {
           const previewImg = setting.descEl.querySelector("img[data-preview");
+          // @ts-ignore
           if (previewImg) previewImg.src = value;
           const fileUpload = setting.descEl.createEl("input");
           fileUpload.style.visibility = "hidden";
           fileUpload.type = "file";
-          fileUpload.onchange = (event) => {
-            const file = event.target.files[0],
-              reader = new FileReader();
-            reader.onloadend = () => {
-              onChange(reader.result);
-              if (previewImg) previewImg.src = reader.result;
-            };
-            reader.readAsDataURL(file);
+          fileUpload.onchange = (event: Event) => {
+            if (event.target != null) {
+              // @ts-ignore
+              const file = event.target.files[0],
+                reader = new FileReader();
+              reader.onloadend = () => {
+                onChange(reader.result);
+                // @ts-ignore
+                if (previewImg) previewImg.src = reader.result;
+              };
+              reader.readAsDataURL(file);
+            }
           };
           setting.addButton((button) => {
             button.setIcon("image").onClick(() => fileUpload.click());
@@ -362,22 +382,27 @@ class SettingsTab extends obsidian.PluginSettingTab {
         } else if (opt.type === "moment") {
           setting.addMomentFormat((moment) => {
             const previewEl = setting.descEl.querySelector("[data-preview]");
+            // @ts-ignore
             if (previewEl) moment.setSampleEl(previewEl);
             moment
+              // @ts-ignore
               .setPlaceholder(opt.placeholder)
+              // @ts-ignore
               .setDefaultFormat(opt.default ?? "")
               .setValue(value)
               .onChange(onChange);
           });
         } else {
           const previewEl = setting.descEl.querySelector("[data-preview]"),
-            updatePreview = (value) => {
+            updatePreview = (value: any) => {
               if (!previewEl) return;
+              // @ts-ignore
               previewEl.innerText = opt?.postprocessor(value) ?? value;
             };
           updatePreview(value);
           setting.addText((text) => {
             text
+              // @ts-ignore
               .setPlaceholder(opt.placeholder)
               .setValue(value)
               .onChange((value) => [onChange(value), updatePreview(value)]);
@@ -389,10 +414,17 @@ class SettingsTab extends obsidian.PluginSettingTab {
 }
 
 class TrayPlugin extends obsidian.Plugin {
+  settings: any;
+
+  TrayPlugin() {
+    this.settings = this;
+  }
+
   async onload() {
     log(LOG_LOADING);
     await this.loadSettings();
     this.addSettingTab(new SettingsTab(this.app, this));
+    // @ts-ignore
     const { settings } = this;
 
     plugin = this;
@@ -403,6 +435,7 @@ class TrayPlugin extends obsidian.Plugin {
     observeChildWindows();
     if (settings.runInBackground) interceptWindowClose();
     if (settings.hideOnLaunch) {
+      // @ts-ignore
       this.registerEvent(this.app.workspace.onLayoutReady(hideWindows));
     }
 
@@ -419,6 +452,7 @@ class TrayPlugin extends obsidian.Plugin {
       callback: closeVault,
     });
   }
+
   onunload() {
     log(LOG_CLEANUP);
     unregisterHotkeys();
@@ -428,12 +462,17 @@ class TrayPlugin extends obsidian.Plugin {
 
   async loadSettings() {
     const DEFAULT_SETTINGS = OPTIONS.map((opt) => ({
+      // @ts-ignore
       [opt.key]: opt.default,
     }));
+    // @ts-ignore
     this.settings = Object.assign(...DEFAULT_SETTINGS, await this.loadData());
   }
+
   async saveSettings() {
+    // @ts-ignore
     await this.saveData(this.settings);
   }
 }
+
 module.exports = TrayPlugin;
