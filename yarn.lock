@@ -343,15 +343,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/electron@npm:^1.6.10":
-  version: 1.6.10
-  resolution: "@types/electron@npm:1.6.10"
-  dependencies:
-    electron: "*"
-  checksum: 1194d023d425fad826d719b761c67022ef97a4d3bea40ce6a3ac36aa40f913e3714775ef816744ec61214ab49b0ca377a939b18a8c29bfd76285011c21e2de76
-  languageName: node
-  linkType: hard
-
 "@types/emscripten@npm:^1.39.6":
   version: 1.39.6
   resolution: "@types/emscripten@npm:1.39.6"
@@ -1016,19 +1007,6 @@ __metadata:
   version: 16.3.1
   resolution: "dotenv@npm:16.3.1"
   checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
-  languageName: node
-  linkType: hard
-
-"electron@npm:*":
-  version: 25.0.1
-  resolution: "electron@npm:25.0.1"
-  dependencies:
-    "@electron/get": ^2.0.0
-    "@types/node": ^18.11.18
-    extract-zip: ^2.0.1
-  bin:
-    electron: cli.js
-  checksum: ddf72cfe1fca113bd99649df0b9df23fc939eeeb72cb3939e2e5a2ee613789e39d511f083fd42ad9da8adc4ed2dbc6ab75d0af58a51db376d1d2b89e1da6d9b4
   languageName: node
   linkType: hard
 
@@ -2192,7 +2170,6 @@ __metadata:
   dependencies:
     "@codemirror/state": ^6.2.1
     "@codemirror/view": ^6.15.3
-    "@types/electron": ^1.6.10
     "@types/node": ^20.4.5
     "@typescript-eslint/eslint-plugin": 6.2.1
     "@typescript-eslint/parser": 6.2.1

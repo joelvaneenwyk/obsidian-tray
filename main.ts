@@ -46,31 +46,31 @@ import { Menu, Tray } from "electron/main";
 import { nativeImage } from "electron/common";
 import { globalShortcut, app } from "electron";
 
-const childWindows = new Set(),
-  observeChildWindows = () => {
-    // @ts-ignore
-    electron.remote
-      .getCurrentWindow()
-      .webContents.on("did-create-window", (win: any) => {
-        childWindows.add(win);
-        win.on("close", () => childWindows.delete(win));
-        win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
-      });
-  },
+const childWindows = new Set();
+const observeChildWindows = () => {
   // @ts-ignore
-  getAllWindows = () => [...childWindows, getCurrentWindow()],
-  showWindows = () => {
-    log(LOG_SHOWING_WINDOWS);
-    getAllWindows().forEach((win) => win.show());
-  },
-  hideWindows = () => {
-    log(LOG_HIDING_WINDOWS);
-    getAllWindows().forEach((win) => [
-      win.isFocused() && win.blur(),
-      plugin.settings.runInBackground ? win.hide() : win.minimize(),
-    ]);
-  },
-  toggleWindows = (checkForFocus = true) => {
+  electron.remote
+    .getCurrentWindow()
+    .webContents.on("did-create-window", (win: any) => {
+      childWindows.add(win);
+      win.on("close", () => childWindows.delete(win));
+      win.setSkipTaskbar(plugin.settings.hideTaskbarIcon);
+    });
+};
+// @ts-ignore
+const getAllWindows = () => [...childWindows, getCurrentWindow()];
+const showWindows = () => {
+  log(LOG_SHOWING_WINDOWS);
+  getAllWindows().forEach((win) => win.show());
+};
+const hideWindows = () => {
+  log(LOG_HIDING_WINDOWS);
+  getAllWindows().forEach((win) => [
+    win.isFocused() && win.blur(),
+    plugin.settings.runInBackground ? win.hide() : win.minimize(),
+  ]);
+};
+const toggleWindows = (checkForFocus = true) => {
     const openWindows = getAllWindows().some((win) => {
       return (!checkForFocus || win.isFocused()) && win.isVisible();
     });
@@ -78,26 +78,26 @@ const childWindows = new Set(),
     else showWindows();
   };
 
-const onWindowClose = (event: any) => event.preventDefault(),
-  onWindowUnload = (event: any) => {
-    log(LOG_WINDOW_CLOSE);
-    // @ts-ignore
-    getCurrentWindow().hide();
-    event.stopImmediatePropagation();
-    // setting return value manually is more reliable than
-    // via `return false` according to electron
-    event.returnValue = false;
-  },
-  interceptWindowClose = () => {
-    // intercept in renderer
-    window.addEventListener("beforeunload", onWindowUnload, true);
-    // intercept in main: is asynchronously executed when registered
-    // from renderer, so won't prevent close by itself, but counteracts
-    // the 3-second delayed window force close in obsidian.asar/main.js
-    // @ts-ignore
-    getCurrentWindow().on("close", onWindowClose);
-  },
-  allowWindowClose = () => {
+const onWindowClose = (event: any) => event.preventDefault();
+const onWindowUnload = (event: any) => {
+  log(LOG_WINDOW_CLOSE);
+  // @ts-ignore
+  getCurrentWindow().hide();
+  event.stopImmediatePropagation();
+  // setting return value manually is more reliable than
+  // via `return false` according to electron
+  event.returnValue = false;
+};
+const interceptWindowClose = () => {
+  // intercept in renderer
+  window.addEventListener("beforeunload", onWindowUnload, true);
+  // intercept in main: is asynchronously executed when registered
+  // from renderer, so won't prevent close by itself, but counteracts
+  // the 3-second delayed window force close in obsidian.asar/main.js
+  // @ts-ignore
+  getCurrentWindow().on("close", onWindowClose);
+};
+const allowWindowClose = () => {
     // @ts-ignore
     getCurrentWindow().removeListener("close", onWindowClose);
     window.removeEventListener("beforeunload", onWindowUnload, true);

@@ -8,7 +8,6 @@
 	"dependencies": {
 		"@codemirror/state": "^6.2.1",
 		"@codemirror/view": "^6.15.3",
-		"@types/electron": "^1.6.10",
 		"@types/node": "^20.4.5",
 		"@typescript-eslint/eslint-plugin": "6.2.1",
 		"@typescript-eslint/parser": "6.2.1",
