@@ -1,10 +1,10 @@
 {
-  "id": "tray",
-  "name": "Tray",
-  "author": "dragonwocky",
-  "authorUrl": "https://dragonwocky.me/",
-  "description": "Run Obsidian from the system tray for customisable window management & global quick notes",
-  "version": "0.3.5",
+  "id": "mycoshiro-tray",
+  "name": "Mycoshiro Tray",
+  "author": "joelvaneenwyk",
+  "authorUrl": "https://joelvaneenwyk.com/",
+  "description": "Run Obsidian from the system tray for customizable window management & global quick notes",
+  "version": "0.3.4",
   "isDesktopOnly": true,
   "minAppVersion": "1.0.0"
 }
