@@ -9,7 +9,7 @@ import { Setting } from 'obsidian';
 import { LogLevels } from './logger';
 import { TrayPlugin, htmlToFragment, keyToLabel } from './main';
 
-export const DEFAULT_DATE_FORMAT: string = 'YYYY-MM-DD';
+export const DEFAULT_DATE_FORMAT: string = 'yyyy-MM-dd';
 
 // 16x16 base64 obsidian icon: generated from obsidian.asar/icon.png
 export const OBSIDIAN_BASE64_ICON =

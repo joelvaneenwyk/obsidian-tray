@@ -30,7 +30,7 @@ Hotkeys can be assigned to the commands via Obsidian's built-in hotkey manager.
 | Option                 | Description                                                                                                                                                                                   | Default                      |
 |------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
 | Quick note location    | New quick notes will be placed in this folder.                                                                                                                                                |                              |
-| Quick note date format | New quick notes will use a filename of this pattern. Format: [Moment.js format string](https://momentjs.com/docs/#/displaying/format/)                                                        | `YYYY-MM-DD`                 |
+| Quick note date format | New quick notes will use a filename of this pattern. Format: [Moment.js format string](https://momentjs.com/docs/#/displaying/format/)                                                        | `yyyy-MM-dd`                 |
 | Quick note hotkey      | This hotkey is registered globally and will be detected even if Obsidian does not have keyboard focus. Format: [Electron accelerator](https://www.electronjs.org/docs/latest/api/accelerator) | <kbd>CmdOrCtrl+Shift+Q</kbd> |
 
 ## Installation
